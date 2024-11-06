@@ -1,0 +1,117 @@
+:root {
+    --primary-color: #6a1b9a;
+    --secondary-color: #9c27b0;
+    --accent-color: #e1bee7;
+    --text-color: #333;
+    --light-bg: #f3e5f5;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    color: var(--text-color);
+    background-color: var(--light-bg);
+}
+
+.navbar {
+    background-color: var(--primary-color) !important;
+}
+
+.navbar-brand {
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
+.nav-link {
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.nav-link:hover {
+    color: var(--accent-color) !important;
+}
+
+        .card {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        .card-header {
+            background-color: var(--accent-color);
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+        .emoji-count {
+            font-size: 0.8rem;
+            margin-left: 2px;
+        }
+	.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+    background-color: var(--secondary-color);
+    border-color: var(--secondary-color);
+}
+
+        .card-text {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: var(--text-color);
+            padding: 15px;
+            background-color: rgba(255, 255, 255, 0.7);
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+        .card-text:hover {
+            background-color: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .card-text span {
+            display: inline-block;
+            transition: transform 0.3s ease, color 0.3s ease;
+        }
+        .card-text:hover span {
+            transform: translateY(-2px);
+            color: var(--secondary-color);
+        }
+
+        .emoji-button {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .emoji-button:hover {
+            transform: scale(1.2);
+        }
+        .emoji-count {
+            font-size: 0.8rem;
+            margin-left: 2px;
+        }
+        #post-form {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        #post-content {
+            resize: none;
+        }
+	        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .new-post {
+            animation: fadeInUp 0.5s ease-out;
+        }

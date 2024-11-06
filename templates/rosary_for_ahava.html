@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rosary Prayer</title>
+        <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/rosary_for_ahava.css') }}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<style>
+        .swipe-prayer {
+            font-size: 1.2em;
+            padding: 10px 20px;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .emoji {
+            position: absolute;
+            font-size: 2em;
+            opacity: 0;
+            pointer-events: none;
+        }
+        @keyframes float-up {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <main>
+            <section class="info">
+                <div class="total-rosaries">
+			<h4>Total Rosaries Prayed </h4><h2><span id="totalRosariesPrayed">{{ data['totalRosariesPrayed'] }}</span></h2>
+                </div>
+                <div class="mystery-info">
+                    <h3 id="mysteryType">{{ data['mysteryType'] }}</h3>
+                    <p id="mysteryName">{{ data['mysteryName'] }}</p>
+                </div>
+            </section>
+
+            <section class="rosary">
+		    <div class="beads-container">
+			    <span id="bead-red" class="bead red-bead"></span>
+                    <span id="bead-1" class="bead"></span>
+                    <span id="bead-2" class="bead"></span>
+                    <span id="bead-3" class="bead"></span>
+                    <span id="bead-4" class="bead"></span>
+                    <span id="bead-5" class="bead"></span>
+                    <span id="bead-6" class="bead"></span>
+                    <span id="bead-7" class="bead"></span>
+                    <span id="bead-8" class="bead"></span>
+                    <span id="bead-9" class="bead"></span>
+                    <span id="bead-10" class="bead"></span>
+		    <span id="cross" class="cross">✝️</span>
+                </div>
+            </section>
+
+            <div class="prayer-button">
+                <button id="swipe-prayer">Pray</button>
+            </div>
+        </main>
+   
+    <div class="intention-container">
+        <input type="text" id="intention-input" placeholder="Enter your prayer intention...">
+        <button id="post-intention">Post</button>
+    </div>
+
+    <div class="intentions-list">
+        <h3>Posted Intentions</h3>
+        <div id="intentions-cards">
+            <!-- Intentions will be dynamically added here -->
+            {% for intention in intentions %}
+                <div class="intention-card">
+                    <div class="intention-date">{{ intention['date'] }}</div>
+                    <div class="intention-text">{{ intention['text'] }}</div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            $('#post-intention').on('click', function() {
+                var intentionText = $('#intention-input').val().trim();
+                if (intentionText) {
+                    $.ajax({
+                        url: '/post_intention',
+                        type: 'POST',
+                        data: JSON.stringify({ 'intention': intentionText }),
+                        contentType: 'application/json',
+                        success: function(response) {
+                            if (response.success) {
+                                // Add the new intention to the intentions cards
+                                var newIntentionCard = `
+                                    <div class="intention-card">
+                                        <div class="intention-date">${response.date}</div>
+                                        <div class="intention-text">${response.intention}</div>
+                                    </div>
+                                `;
+                                $('#intentions-cards').prepend(newIntentionCard);
+                                
+                                // Clear the input box
+                                $('#intention-input').val('');
+                            } else {
+                                alert('Failed to post intention. Please try again.');
+                            }
+                        },
+                        error: function() {
+                            alert('An error occurred. Please try again.');
+                        }
+                    });
+                } else {
+                    alert('Please enter an intention before posting.');
+                }
+            });
+        });
+    </script>
+    <style>
+        .intention-container {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #intention-input {
+            width: 70%;
+            padding: 10px;
+            border: 1px solid var(--accent-color);
+            border-radius: 20px 0 0 20px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        #intention-input:focus {
+            border-color: var(--primary-color);
+        }
+
+        #post-intention {
+            padding: 10px 15px;
+            background-color: var(--primary-color);
+            color: var(--white);
+            border: none;
+            border-radius: 0 20px 20px 0;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s ease;
+        }
+
+        #post-intention:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .intentions-list {
+            margin-top: 30px;
+        }
+
+        .intentions-list h3 {
+            text-align: center;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+
+        #intentions-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .intention-card {
+            background-color: var(--white);
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .intention-date {
+            font-size: 12px;
+            color: var(--secondary-color);
+            margin-bottom: 5px;
+        }
+
+        .intention-text {
+            font-size: 14px;
+            color: var(--text-color);
+        }
+
+    </style>
+
+ 
+    </div>
+     <!--   <script>
+        const emojis = ['🌸', '💐', '🌷', '🌹', '🌹', '🌹', '🌹', '🌻'];
+        const prayButton = document.getElementById('swipe-prayer');
+
+        prayButton.addEventListener('click', () => {
+            for (let i = 0; i < 20; i++) {
+                setTimeout(() => {
+                    createEmoji();
+                }, i * 100);
+            }
+        });
+
+        function createEmoji() {
+            const emoji = document.createElement('div');
+            emoji.className = 'emoji';
+            emoji.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+            
+            const startX = Math.random() * window.innerWidth;
+            emoji.style.left = `${startX}px`;
+            emoji.style.top = `${window.innerHeight}px`;
+
+            const animationDuration = 3 + Math.random() * 2;
+            emoji.style.animation = `  float-up ${animationDuration}s ease-out`;
+
+            document.body.appendChild(emoji);
+
+            setTimeout(() => {  
+                document.body.removeChild(emoji);
+            }, animationDuration * 1000);
+        }
+    </script>
+-->
+    <script src="{{ url_for('static', filename='js/rosary_for_ahava.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,163 @@
+/* Custom CSS to enhance Bootstrap styles */
+:root {
+    --primary-color: #6a1b9a;
+    --secondary-color: #9c27b0;
+    --accent-color: #e1bee7;
+    --text-color: #333;
+    --light-bg: #f3e5f5;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    color: var(--text-color);
+    background-color: var(--light-bg);
+}
+
+.navbar {
+    background-color: var(--primary-color) !important;
+}
+
+.navbar-brand {
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
+.nav-link {
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.nav-link:hover {
+    color: var(--accent-color) !important;
+}
+
+h1 {
+    color: var(--primary-color);
+    font-weight: 700;
+}
+
+h6 {
+    background-color: var(--accent-color); /* You can use --secondary-color or --accent-color as well */
+    color: var(--primary-color);
+    padding: 5px; /* Padding to give some spacing inside the h6 tag */
+    border-radius: 5px;
+    text-align: center; /* Center the text */
+}
+
+a.wog {
+    background-color: var(--secondary-color); /* You can use --primary-color or --accent-color */
+    color: #fff;
+    padding-left:5px;
+    padding-right:5px;
+    border-radius: 5px; /* Rounded corners */
+    text-decoration: none; /* Remove the underline from the link */
+    display: inline-block; /* So that padding and border-radius work properly */
+    text-align: center; /* Center the text */
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2); /* Slight drop shadow for 3D effect */
+    transition: background-color 0.3s ease, box-shadow 0.3s ease; /* Smooth transition for hover and shadow */
+}
+
+a.wog:hover {
+    background-color: var(--primary-color); /* Change background on hover */
+    color: #fff;
+    box-shadow: 3px 3px 7px rgba(0, 0, 0, 0.3); /* Enhance shadow on hover for more depth */
+}
+
+
+.card {
+    border: none;
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.prayer-counter {
+    text-align: center;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.prayer-counter:hover {
+    transform: translateY(-5px);
+}
+
+.prayer-counter h3 {
+    color: var(--primary-color);
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+
+ .counter {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--secondary-color);
+            transition: all 0.3s ease;
+        }
+        .milestone {
+            animation: pulse 1s infinite alternate;
+        }
+        .milestone-10k {
+            color: #FFD700; /* Gold */
+        }
+        .milestone-5k {
+            color: #C0C0C0; /* Silver */
+        }
+        .milestone-1k {
+            color: #B87333; /* Bronze */
+        }
+        @keyframes pulse {
+            from { transform: scale(1); }
+            to { transform: scale(1.1); }
+        }
+
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+    background-color: var(--secondary-color);
+    border-color: var(--secondary-color);
+}
+
+.animation-container {
+    position: relative;
+    height: 70px;
+    overflow: hidden;
+}
+
+.soul {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    animation: float 2s ease-out forwards;
+    pointer-events: none;
+    transform: translateY(100%) scale(0.5);
+}
+
+@keyframes float {
+    0% {
+        transform: translateY(70%) scale(0.5);
+        opacity: 1;
+    }
+    50% {
+	transform: translateY(50%) scale(0.7);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateY(0%) scale(1);
+        opacity: 0;
+    }
+}
+
+@media (max-width: 768px) {
+    .prayer-counter {
+        margin-bottom: 20px;
+    }
+}

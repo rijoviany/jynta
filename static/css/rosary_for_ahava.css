@@ -1,0 +1,188 @@
+:root {
+    --primary-color: #6a1b9a;
+    --secondary-color: #9c27b0;
+    --accent-color: #e1bee7;
+    --text-color: #333;
+    --light-bg: #f3e5f5;
+    --white: #ffffff;
+    --red-bead: #df1b9a;
+    --white-bead: #ffffff;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    color: var(--text-color);
+    background-color: var(--light-bg);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    margin: 30x;
+}
+
+.card {
+    background-color: var(--white);
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    width: 90%;
+    max-width: 400px;
+}
+
+@media screen and (max-width: 600px) {
+    .card {
+        width: 95%;
+    }
+}
+
+
+.total-rosaries {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.total-rosaries h4 {
+    color: var(--primary-color);
+}
+
+
+.total-rosaries h2 {
+    color: var(--primary-color);
+    font-size: 5rem;
+    font-weight: bold;
+}
+
+.mystery-info {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.mystery-info h3 {
+    color: var(--secondary-color);
+    font-size: 1.2rem;
+    margin-bottom: 5px;
+}
+
+.mystery-info p {
+    color: var(--text-color);
+    font-size: 1rem;
+    font-style: italic;
+}
+
+.rosary {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.beads-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+
+.bead {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: var(--white-bead);
+    border: 2px solid var(--primary-color);
+    margin: 0 5px;
+    transition: background-color 0.3s, transform 0.3s ease-in-out;
+}
+
+.bead.active {
+    background-image: linear-gradient(to bottom, var(--white-bead) 50%, var(--primary-color) 50%);
+    background-size: 100% 200%;
+    background-position: top;
+    animation: fillBead 12s linear forwards;
+    transform: scale(1.2);
+}
+
+@keyframes fillBead {
+    0% {
+        background-position: top;
+    }
+    100% {
+        background-position: bottom;
+    }
+}
+
+
+
+.red-bead {
+    background-color: var(--red-bead);
+    border-color: var(--red-bead);
+    transform: scale(1.2);
+}
+
+.red-bead.active {
+    background-image: linear-gradient(to bottom, var(--red-bead) 50%, var(--red-bead) 50%);
+    background-size: 100% 200%;
+    background-position: top;
+    animation: fillBead 5s linear forwards;
+    transform: scale(1.2);
+}
+
+.cross {
+    transform: scale(1.5);
+    border-radius:50%;
+}
+
+.prayer-button {
+    text-align: center;
+}
+
+button#swipe-prayer {
+    padding: 15px 30px;
+    background-color: var(--primary-color);
+    color: var(--white);
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.1s ease;
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+button#swipe-prayer:active {
+    background-color: var(--secondary-color);
+    transform: scale(0.95);
+}
+
+button#swipe-prayer:hover {
+    background-color: var(--secondary-color);
+}
+
+@keyframes glow {
+    0% {
+        box-shadow: 0 0 5px #FFFF8F;
+    }
+    50% {
+        box-shadow: 0 0 20px #E49B0F;
+    }
+    100% {
+        box-shadow: 0 0 5px #FFBF00;
+    }
+}
+
+.glow {
+    animation: glow 1s ease-in-out;
+}
+
+@keyframes button-click {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(0.95);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+button#swipe-prayer.clicked {
+    animation: button-click 0.3s;
+}

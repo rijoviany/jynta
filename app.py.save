@@ -1,0 +1,134 @@
+import json
+from flask import Flask, render_template, jsonify, request, redirect, url_for
+from datetime import datetime, date
+import os
+from werkzeug.utils import secure_filename
+
+
+app = Flask(__name__)
+
+# Path to the JSON file
+DATA_FILE = 'prayer_counts.json'
+UPLOAD_FOLDER = 'static/gallery/'
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+# Route to handle image upload
+@app.route('/upload', methods=['GET', 'POST'])
+def upload_image():
+    if request.method == 'POST':
+        # Check if a file is uploaded
+        if 'file' not in request.files:
+            return redirect(request.url)
+        file = request.files['file']
+        # If no file is selected, reload the page
+        if file.filename == '':
+            return redirect(request.url)
+        # If the file is allowed, save it to the gallery folder
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            return redirect(url_for('home'))  # Redirect to the homepage to see the uploaded image
+    return render_template('upload.html')  # Show upload form
+
+
+# Helper function to load data from JSON
+def load_data():
+    if os.path.exists(DATA_FILE):
+        with open(DATA_FILE, 'r') as file:
+            return json.load(file)
+    else:
+        return {
+            'soul': 0,
+            'creed': 0,
+            'hail': 0,
+            'woc': 0,
+            'blessed': 0,
+            'rosary': 0
+        }
+
+# Helper function to save data to JSON
+def save_data(data):
+    with open(DATA_FILE, 'w') as file:
+        json.dump(data, file)
+
+# Function to get the current count for a prayer type
+def get_count(prayer_type):
+    data = load_data()
+    return data.get(prayer_type, 0)
+
+# Function to increment the count for a prayer type
+def increment_count(prayer_type):
+    data = load_data()
+    if prayer_type in data:
+        data[prayer_type] += 1
+    else:
+        data[prayer_type] = 1
+    save_data(data)
+    return data[prayer_type]
+
+# Function to calculate the days until the conference
+def calculate_days_until_conference():
+    conference_start_date = datetime(2024, 12, 26).date()
+    today = date.today()
+    days_until = (conference_start_date - today).days
+    return max(0, days_until)  # Ensure we don't show negative days
+
+@app.route('/')
+def home():
+    days_until_conference = calculate_days_until_conference()
+    images = os.listdir(app.config['UPLOAD_FOLDER'])
+    # Sort the images by last modified time
+    images.sort(key=lambda f: os.path.getmtime(os.path.join(app.config['UPLOAD_FOLDER'], f)), reverse=True)
+    return render_template('home.html', days_until_conference=days_until_conference, images=images)
+
+@app.route('/pray-for-ahava')
+def pray_for_ahava():
+    counts = {
+        'soul': get_count('soul'),
+        'creed': get_count('creed'),
+        'hail': get_count('hail'),
+        'rosary': get_count('rosary'),
+        'woc': get_count('woc'),
+        'blessed': get_count('blessed')
+    }
+    return render_template('pray_for_ahava.html', counts=counts)
+
+@app.route('/pray/<prayer_type>', methods=['POST'])
+def pray(prayer_type):
+    if prayer_type in ['soul', 'creed', 'hail', 'rosary','woc','blessed']:
+        count = increment_count(prayer_type)
+        return jsonify({'success': True, 'count': count})
+    else:
+        return jsonify({'success': False, 'error': 'Invalid prayer type'}), 400
+
+@app.route('/get_count/<prayer_type>')
+def get_count_route(prayer_type):
+    if prayer_type in ['soul', 'creed', 'hail', 'rosary','woc','blessed']:
+        count = get_count(prayer_type)
+        return jsonify({'count': count})
+    else:
+        return jsonify({'error': 'Invalid prayer type'}), 400
+
+
+@app.route('/wog-for-ahava')
+def wog():
+    return render_template('wog_for_ahava.html')
+
+if __name__ == '__main__':
+    # Initialize the JSON file with default values if it doesn't exist
+    if not os.path.exists(DATA_FILE):
+        save_data({
+            'soul': 0,
+            'creed': 0,
+            'hail': 0,
+            'woc': 0,
+            'blessed': 0,
+            'rosary': 0
+        })
+    app.run(host='0.0.0.0', debug=False)
+
