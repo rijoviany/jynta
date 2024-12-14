@@ -16,6 +16,7 @@ DATA_FILE = 'prayer_counts.json'
 UPLOAD_FOLDER = 'static/gallery/'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 INTENTIONS_FILE = 'data/intentions.json'
+TSHIRT_ORDERS_FILE = 'data/tshirt_orders.json'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 
@@ -352,7 +353,61 @@ def stream():
 
     return Response(event_stream(), content_type='text/event-stream')
 
-#--------------------------------
+#-----------------------------------
+
+# Helper function to load T-shirt orders
+def load_tshirt_orders():
+    try:
+        with open(TSHIRT_ORDERS_FILE, 'r') as file:
+            return json.load(file)
+    except FileNotFoundError:
+        return []
+
+# Helper function to save T-shirt orders
+def save_tshirt_orders(orders):
+    with open(TSHIRT_ORDERS_FILE, 'w') as file:
+        json.dump(orders, file)
+
+# Route for T-shirt booking page
+@app.route('/tshirt', methods=['GET'])
+def tshirt_booking():
+    return render_template('tshirt.html')
+
+# API endpoint for T-shirt booking
+@app.route('/api/book-tshirt', methods=['POST'])
+def book_tshirt():
+    data = request.json
+    required_fields = ['name', 'mobile', 'model', 'color', 'size']
+    
+    # Validate required fields
+    if not all(field in data for field in required_fields):
+        return jsonify({'error': 'Missing required fields'}), 400
+    
+    # Load existing orders
+    orders = load_tshirt_orders()
+    
+    # Generate order ID (timestamp + count)
+    order_id = f"TSH{int(time.time())}{len(orders) + 1}"
+    
+    # Create new order
+    new_order = {
+        'order_id': order_id,
+        'name': data['name'],
+        'mobile': data['mobile'],
+        'model': data['model'],
+        'color': data['color'],
+        'size': data['size'],
+        'timestamp': datetime.now().isoformat()
+    }
+    
+    # Add to orders list
+    orders.append(new_order)
+    save_tshirt_orders(orders)
+    
+    return jsonify({
+        'message': 'T-shirt booked successfully',
+        'order_id': order_id
+    })
 
 
 
@@ -368,5 +423,3 @@ if __name__ == '__main__':
             'rosary': 0
         })
     app.run(host='0.0.0.0', debug=False)
-
-
