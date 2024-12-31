@@ -369,9 +369,9 @@ def save_tshirt_orders(orders):
         json.dump(orders, file)
 
 # Route for T-shirt booking page
-@app.route('/tshirt', methods=['GET'])
+@app.route('/book-tshirt')
 def tshirt_booking():
-    return render_template('tshirt.html')
+    return redirect('https://docs.google.com/forms/d/e/1FAIpQLScOezSpsAiicsuJWqxlYBxYmXSVueXAYpZG99zEOa3t99uCbg/viewform')
 
 # API endpoint for T-shirt booking
 @app.route('/api/book-tshirt', methods=['POST'])
