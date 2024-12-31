@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ahava Intercession</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pray_for_ahava_style.css') }}">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="/">JY Neyyattinkara</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/"><i class="fas fa-home"></i> Back to Home</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Ahava Intercession</h1>
+ 
+        {% if prayers %}
+        <div class="row justify-content-center">
+            {% for prayer in prayers %}
+            <div class="col-md-8 mb-4">
+                <div class="card shadow-lg">
+                    <div class="card-body">
+                        <div class="prayer-counter">
+                            <h3>{{ prayer.title }}</h3>
+                            <h6>{{ prayer.description }}</h6>
+                            <p class="lead text-center mb-4">{{ prayer.intention }}</p>
+                            <div class="progress mb-3" style="height: 25px; background-color: #e9ecef;">
+                                <div class="progress-bar progress-bar-striped progress-bar-animated var(--primary-color)" 
+                                     role="progressbar" 
+                                     style="width: {{ prayer.count|percentage(prayer.target) }}%"
+                                     aria-valuenow="{{ prayer.count|percentage(prayer.target) }}" 
+                                     aria-valuemin="0" 
+                                     aria-valuemax="100">
+                                    {{ "%.1f"|format(prayer.count|percentage(prayer.target)) }}%
+                                </div>
+                            </div>
+                            <p>Prayers: <span id="prayerCounter_{{ prayer.serial }}" class="counter">{{ prayer.count }}</span> / {{ prayer.target }}</p>
+                            <div id="prayerAnimation_{{ prayer.serial }}" class="animation-container"></div>
+                            <button class="btn btn-primary btn-lg mt-3" 
+                                    onclick="pray('prayer_{{ prayer.serial }}')">Pray Now</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="alert alert-info text-center">
+            No active prayers at the moment.
+        </div>
+        {% endif %}
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/ahava_intercession_script.js') }}"></script>
+</body>
+</html> 

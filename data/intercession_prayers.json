@@ -1,0 +1,22 @@
+{
+    "prayers": [
+        {
+            "serial": 1,
+            "title": "Divine Mercy Chaplet",
+            "description": "For all participants",
+            "intention": "For the success of Ahava 2024",
+            "count": 19,
+            "target": 1000,
+            "active": true
+        },
+        {
+            "serial": 2,
+            "title": "Small Prayer",
+            "description": "I love you Jesus",
+            "intention": "for participants to be consistent in personal prayer",
+            "count": 41,
+            "target": 100,
+            "active": true
+        }
+    ]
+}

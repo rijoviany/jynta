@@ -2,3 +2,4 @@
 venv/*
 nohup.out
 backup/*
+run.sh

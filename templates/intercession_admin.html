@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intercession Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pray_for_ahava_style.css') }}">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="/">JY Neyyattinkara</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/"><i class="fas fa-home"></i> Back to Home</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Manage Intercession Prayers</h1>
+        
+        <!-- Add New Prayer Form -->
+        <div class="row justify-content-center mb-4">
+            <div class="col-md-8">
+                <div class="card shadow-lg">
+                    <div class="card-header" style="background-color: var(--primary-color); color: white;">
+                        <h4 class="mb-0">Add New Prayer</h4>
+                    </div>
+                    <div class="card-body" style="background-color: var(--light-bg);">
+                        <form id="addPrayerForm" method="POST" action="{{ url_for('add_intercession_prayer') }}">
+                            <div class="mb-3">
+                                <label for="title" class="form-label">Prayer Title</label>
+                                <input type="text" class="form-control" id="title" name="title" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="description" class="form-label">Description</label>
+                                <textarea class="form-control" id="description" name="description" rows="2" required></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="intention" class="form-label">Intention</label>
+                                <textarea class="form-control" id="intention" name="intention" rows="2" required></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="target" class="form-label">Target Count</label>
+                                <input type="number" class="form-control" id="target" name="target" required min="1">
+                            </div>
+                            <button type="submit" class="btn btn-lg w-100" 
+                                    style="background-color: var(--secondary-color); color: white;">
+                                Add Prayer
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Existing Prayers Table -->
+        <div class="row justify-content-center">
+            <div class="col-md-12">
+                <div class="card shadow-lg">
+                    <div class="card-header" style="background-color: var(--primary-color); color: white;">
+                        <h4 class="mb-0">Existing Prayers</h4>
+                    </div>
+                    <div class="card-body" style="background-color: var(--light-bg);">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead style="background-color: var(--accent-color);">
+                                    <tr>
+                                        <th>Serial</th>
+                                        <th>Title</th>
+                                        <th>Description</th>
+                                        <th>Intention</th>
+                                        <th>Count</th>
+                                        <th>Target</th>
+                                        <th>Progress</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for prayer in prayers %}
+                                    <tr>
+                                        <td>{{ prayer.serial }}</td>
+                                        <td>{{ prayer.title }}</td>
+                                        <td>{{ prayer.description }}</td>
+                                        <td>{{ prayer.intention }}</td>
+                                        <td>{{ prayer.count }}</td>
+                                        <td>{{ prayer.target }}</td>
+                                        <td style="min-width: 150px;">
+                                            <div class="progress" style="height: 20px;">
+                                                <div class="progress-bar progress-bar-striped" 
+                                                     role="progressbar" 
+                                                     style="width: {{ prayer.count|percentage(prayer.target) }}%; background-color: var(--secondary-color);"
+                                                     aria-valuenow="{{ prayer.count|percentage(prayer.target) }}" 
+                                                     aria-valuemin="0" 
+                                                     aria-valuemax="100">
+                                                    {{ "%.1f"|format(prayer.count|percentage(prayer.target)) }}%
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span class="badge" 
+                                                  style="background-color: {{ 'var(--secondary-color)' if prayer.active else '#dc3545' }}">
+                                                {{ 'Active' if prayer.active else 'Inactive' }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-sm edit-prayer" 
+                                                    data-id="{{ prayer.serial }}"
+                                                    style="background-color: var(--accent-color); color: var(--text-color);">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="btn btn-sm toggle-status"
+                                                    data-id="{{ prayer.serial }}" 
+                                                    data-active="{{ prayer.active|lower }}"
+                                                    style="background-color: {{ '#dc3545' if prayer.active else 'var(--secondary-color)' }}; color: white;">
+                                                <i class="fas fa-{{ 'times' if prayer.active else 'check' }}"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/intercession_admin.js') }}"></script>
+</body>
+</html> 

@@ -1,15 +1,23 @@
 import json
-from flask import Flask, render_template, jsonify, request, redirect, url_for
+from flask import Flask, render_template, jsonify, request, redirect, url_for, session, Response, flash
 from datetime import datetime, date
 import time
 import os
 from werkzeug.utils import secure_filename
 import pandas as pd
 from collections import defaultdict
+from functools import wraps
+from werkzeug.security import check_password_hash, generate_password_hash
 
 
 
 app = Flask(__name__)
+
+# Generate a secure random key
+app.secret_key = os.environ.get('FLASK_SECRET_KEY', os.urandom(24))
+
+# Set admin password - in production, use environment variable
+ADMIN_PASSWORD = generate_password_hash(os.environ.get('ADMIN_PASSWORD', 'your-default-password'))
 
 # Path to the JSON file
 DATA_FILE = 'prayer_counts.json'
@@ -17,6 +25,8 @@ UPLOAD_FOLDER = 'static/gallery/'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 INTENTIONS_FILE = 'data/intentions.json'
 TSHIRT_ORDERS_FILE = 'data/tshirt_orders.json'
+INTERCESSION_COUNTS_FILE = 'data/intercession_counts.json'
+INTERCESSION_PRAYERS_FILE = 'data/intercession_prayers.json'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 
@@ -92,6 +102,12 @@ def calculate_days_until_conference():
     days_until = (conference_start_date - today).days
     return max(0, days_until)  # Ensure we don't show negative days
 
+def calculate_days_since_conference():
+    conference_start_date = datetime(2024, 12, 26).date()
+    today = date.today()
+    days_since = (today - conference_start_date).days
+    return max(0, days_since)  # Ensure we don't show negative days
+
 def load_posts():
     try:
         with open('posts.json', 'r') as f:
@@ -133,12 +149,12 @@ def get_ministry_data():
 
 @app.route('/')
 def home():
-    days_until_conference = calculate_days_until_conference()
     images = os.listdir(app.config['UPLOAD_FOLDER'])
     ministry_groups = get_ministry_data()
     # Sort the images by last modified time
     images.sort(key=lambda f: os.path.getmtime(os.path.join(app.config['UPLOAD_FOLDER'], f)), reverse=True)
-    return render_template('home.html', days_until_conference=days_until_conference, images=images, ministry_groups=ministry_groups, ministry_icons=MINISTRY_ICONS)
+    days_since = calculate_days_since_conference()
+    return render_template('home.html', images=images, ministry_groups=ministry_groups, ministry_icons=MINISTRY_ICONS, days_since=days_since)
 
 @app.route('/pray-for-ahava')
 def pray_for_ahava():
@@ -409,7 +425,132 @@ def book_tshirt():
         'order_id': order_id
     })
 
+# Add these helper functions
+def load_intercession_data():
+    if os.path.exists(INTERCESSION_COUNTS_FILE):
+        with open(INTERCESSION_COUNTS_FILE, 'r') as file:
+            return json.load(file)
+    else:
+        return {
+            'divine_mercy': 0,
+            'fasting': 0,
+            'holy_hour': 0
+        }
 
+def save_intercession_data(data):
+    with open(INTERCESSION_COUNTS_FILE, 'w') as file:
+        json.dump(data, file)
+
+def get_intercession_count(prayer_type):
+    data = load_intercession_data()
+    return data.get(prayer_type, 0)
+
+def increment_intercession_count(prayer_type):
+    data = load_intercession_data()
+    if prayer_type in data:
+        data[prayer_type] += 1
+    else:
+        data[prayer_type] = 1
+    save_intercession_data(data)
+    return data[prayer_type]
+
+# Add these routes
+@app.route('/ahava-intercession')
+def ahava_intercession():
+    prayers_data = load_intercession_prayers()
+    active_prayers = [p for p in prayers_data['prayers'] if p.get('active', True)]
+    sorted_prayers = sorted(active_prayers, key=lambda x: x['serial'], reverse=True)
+    return render_template('ahava-intercession.html', prayers=sorted_prayers)
+
+@app.route('/intercession/<prayer_type>', methods=['POST'])
+def intercession_pray(prayer_type):
+    try:
+        prayer_id = int(prayer_type.replace('prayer_', ''))
+        prayers_data = load_intercession_prayers()
+        
+        for prayer in prayers_data['prayers']:
+            if prayer['serial'] == prayer_id:
+                prayer['count'] = prayer.get('count', 0) + 1
+                save_intercession_prayers(prayers_data)
+                return jsonify({'success': True, 'count': prayer['count']})
+        
+        return jsonify({'success': False, 'error': 'Prayer not found'}), 404
+    except Exception as e:
+        print(f"Error in intercession_pray: {str(e)}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+def admin_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not session.get('admin_logged_in'):
+            return redirect(url_for('admin_login'))
+        return f(*args, **kwargs)
+    return decorated_function
+
+def load_intercession_prayers():
+    if os.path.exists(INTERCESSION_PRAYERS_FILE):
+        with open(INTERCESSION_PRAYERS_FILE, 'r') as file:
+            return json.load(file)
+    return {"prayers": []}
+
+def save_intercession_prayers(data):
+    with open(INTERCESSION_PRAYERS_FILE, 'w') as file:
+        json.dump(data, file, indent=4)
+
+@app.route('/intercession-admin/login', methods=['GET', 'POST'])
+def admin_login():
+    if request.method == 'POST':
+        if check_password_hash(ADMIN_PASSWORD, request.form['password']):
+            session['admin_logged_in'] = True
+            return redirect(url_for('intercession_admin'))
+        flash('Invalid password', 'error')
+    return render_template('admin_login.html')
+
+@app.route('/intercession-admin')
+@admin_required
+def intercession_admin():
+    prayers_data = load_intercession_prayers()
+    return render_template('intercession_admin.html', prayers=prayers_data['prayers'])
+
+@app.route('/intercession-admin/add', methods=['POST'])
+@admin_required
+def add_intercession_prayer():
+    prayers_data = load_intercession_prayers()
+    new_serial = max([p['serial'] for p in prayers_data['prayers']], default=0) + 1
+    
+    new_prayer = {
+        'serial': new_serial,
+        'title': request.form['title'],
+        'description': request.form['description'],
+        'intention': request.form['intention'],
+        'target': int(request.form['target']),
+        'count': 0,
+        'active': True
+    }
+    
+    prayers_data['prayers'].append(new_prayer)
+    save_intercession_prayers(prayers_data)
+    return redirect(url_for('intercession_admin'))
+
+@app.route('/intercession-admin/toggle-status', methods=['POST'])
+@admin_required
+def toggle_prayer_status():
+    data = request.get_json()
+    prayers_data = load_intercession_prayers()
+    
+    for prayer in prayers_data['prayers']:
+        if prayer['serial'] == int(data['prayer_id']):
+            prayer['active'] = data['active']
+            break
+    
+    save_intercession_prayers(prayers_data)
+    return jsonify({'success': True})
+
+@app.template_filter('percentage')
+def percentage_filter(value, target):
+    if not target:
+        return 0
+    return min(value / target * 100, 100)
 
 if __name__ == '__main__':
     # Initialize the JSON file with default values if it doesn't exist
