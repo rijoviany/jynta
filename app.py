@@ -409,6 +409,18 @@ def book_tshirt():
         'order_id': order_id
     })
 
+@app.route('/ahava-intercession')
+def ahava_intercession():
+    counts = {
+        'soul': 0,
+        'creed': 0,
+        'hail': 0,
+        'rosary': 0,
+        'woc': 0,
+        'blessed': 0,
+        'stgertrude': 0
+    }
+    return render_template('ahava_intercession.html', counts=counts)
 
 
 if __name__ == '__main__':

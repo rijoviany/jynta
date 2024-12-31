@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pray for Ahava Youth Conference</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pray_for_ahava_style.css') }}">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="/">JY Neyyattinkara</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/"><i class="fas fa-home"></i> Back to Home</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Pray for Ahava Youth Conference</h1>
+        <div class="row justify-content-center mb-4">
+            <div class="col-md-6 text-center">
+                <a href="/rosary-for-ahava" class="btn btn-primary btn-lg" target="_blank">
+                    <i class="fas fa-pray"></i> Pray Rosary Together
+                </a>
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card shadow-lg">
+                    <div class="card-body">
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <div class="prayer-counter">    
+                                    <h3 id="prayer-for-souls">Prayer for Souls</h3>
+                                    <h6>intention: for Ahava Conference</h6>
+                                    <p class="lead text-center mb-4">ഈശോ മറിയം യൗസേപ്പേ, ഞാൻ നിങ്ങളെ സ്നേഹിക്കുന്നു;
+                                        ആത്മാക്കളെ രക്ഷിക്കണമേ.</p>
+                                    <p>Total Prayers: <span id="soulCounter" class="counter">{{ counts['soul'] }}</span>
+                                    </p>
+                                    <div id="soulAnimation" class="animation-container"></div>
+                                    <button id="soulPrayButton" class="btn btn-primary btn-lg mt-3">Pray Now</button>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="prayer-counter">    
+                                    <h3 id="st-gertrudes-prayer">St. Gertrude's Prayer</h3>
+                                    <h6>intention: for the Holy Souls in Purgatory</h6>
+                                    <p>നിത്യപിതാവേ! അവിടുത്തെ പ്രിയപുത്രനും ഞങ്ങളുടെ ഏകകര്‍ത്താവുമായ യേശുക്രിസ്തുവിന്‍റെ തിരുരക്തം ഇന്ന് ലോകമെമ്പാടും അര്‍പ്പിക്കപ്പെടുന്ന ദിവ്യബലികളോട് ചേര്‍ത്ത് ശുദ്ധീകരണ സ്ഥലത്തിലെ എല്ലാ ആത്മാക്കള്‍ക്കു വേണ്ടിയും ലോകം മുഴുവനിലുമുള്ള എല്ലാ പാപികള്‍ക്കു വേണ്ടിയും തിരുസഭയിലുള്ള എല്ലാ പാപികള്‍ക്കു വേണ്ടിയും ഞങ്ങളുടെ കുടുംബത്തിലും തലമുറകളിലുള്ളവര്‍ക്കു വേണ്ടിയും ഞങ്ങൾ കാഴ്ച വയ്ക്കുന്നു</p>
+                                    <p>Souls Saved: <span id="stgertrudeCounter" class="counter">{{ counts['stgertrude'] }}</span>
+                                    </p>
+                                    <div id="stgertrudeAnimation" class="animation-container"></div>
+                                    <button id="stgertrudePrayButton" class="btn btn-primary btn-lg mt-3">Pray Now</button>
+                                    <p class="mt-2" style="color: #ba68c8; font-size: 0.9em;">Our Lord promised that 1000 souls will be released from Purgatory each devout recitation</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="prayer-counter">
+                                    <h3 id="creed">വിശ്വാസപ്രമാണം</h3>
+                                    <h6>for Mobilisation </h6>
+                                    <p>
+                                        സര്‍വ്വശക്തനായ പിതാവും ആകാശത്തിന്‍റെയും ഭൂമിയുടെയും സ്രഷ്ടാവുമായ ദൈവത്തില്‍
+                                        ഞാന്‍ വിശ്വസിക്കുന്നു .അവിടുത്തെ ഏകപുത്രനും ഞങ്ങളുടെ കര്‍ത്താവുമായ
+                                        ഈശോമിശിഹായിലും ഞാന്‍ വിശ്വസിക്കുന്നു .ഈ പുത്രന്‍ പരിശുദ്ധാത്മാവാല്‍ ഗര്‍ഭസ്ഥനായി
+                                        കന്യാമറിയത്തില്‍ നിന്നു പിറന്നു .പന്തിയോസ് പീലാത്തോസിന്‍റെ കാലത്ത് പീഡകള്‍
+                                        സഹിച്ച് ,കുരിശില്‍ തറയ്ക്കപ്പെട്ട് ,മരിച്ച് അടക്കപ്പെട്ടു ;പാതാളത്തില്‍ ഇറങ്ങി
+                                        ,മരിച്ചവരുടെ ഇടയില്‍നിന്നു മൂന്നാം നാള്‍ ഉയിര്‍ത്തു
+                                        ;സ്വര്‍ഗ്ഗത്തിലെക്കെഴുന്നള്ളി ,സര്‍വ്വശക്തിയുള്ള പിതാവായ ദൈവത്തിന്‍റെ വലതു
+                                        ഭാഗത്ത് ഇരിക്കുന്നു ;അവിടെനിന്ന് ജീവിക്കുന്നവരെയും മരിച്ചവരെയും വിധിക്കാന്‍
+                                        വരുമെന്നും ഞാന്‍ വിശ്വസിക്കുന്നു .പരിശുദ്ധാത്മാവിലും ഞാന്‍ വിശ്വസിക്കുന്നു
+                                        .വിശുദ്ധ കത്തോലിക്കാ സഭയിലും ,പുണ്യവാന്മാരുടെ ഐക്യത്തിലും ,പാപങ്ങളുടെ
+                                        മോചനത്തിലും ,ശരീരത്തിന്‍റെ ഉയിര്‍പ്പിലും നിത്യമായ ജീവതത്തിലും ഞാന്‍
+                                        വിശ്വസിക്കുന്നു . ആമ്മേന്‍ .</p>
+                                    <p>Total Prayers: <span id="creedCounter" class="counter">{{ counts['creed']
+                                            }}</span></p>
+                                    <div id="creedAnimation" class="animation-container"></div>
+                                    <button id="creedPrayButton" class="btn btn-primary btn-lg mt-3">Pray Now</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row g-4 mt-4">
+                            <div class="col-md-6">
+                                <div class="prayer-counter">
+                                    <h3 id="holy-mass">Holy Mass/ ദിവ്യബലി</h3>
+                                    <h6>for all participants, volunteers & resources </h6>
+                                    <p>Total Prayers: <span id="hailCounter" class="counter">{{ counts['hail'] }}</span>
+                                    </p>
+                                    <div id="hailAnimation" class="animation-container"></div>
+                                    <button id="hailPrayButton" class="btn btn-primary btn-lg mt-3">Pray Now</button>
+
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="prayer-counter">
+                                    <h3 id="hail-mary">Hail Mary</h3>
+                                    <h6>for Finance </h6>
+                                    <!-- <a href="/rosary-for-ahava">Rosary for Ahava</a> -->
+                                    <p>Hail Mary, full of grace, the Lord is with you. Blessed are you among women and
+                                        blessed is the fruit of your womb Jesus. Holy Mary, Mother of God, pray for us
+                                        sinners now and at the hour of our death. Amen.</p>
+                                    <p>Total Prayers: <span id="rosaryCounter" class="counter">{{ counts['rosary']
+                                            }}</span></p>
+                                    <div id="rosaryAnimation" class="animation-container"></div>
+                                    <button id="rosaryPrayButton" class="btn btn-primary btn-lg mt-3">Pray Now</button>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="prayer-counter">
+                                    <h3 id="blessed-mother">എത്രയും ദയയുള്ള മാതാവേ</h3>
+                                    <h6>for Program </h6>
+                                    <p> എത്രയും ദയയുള്ള മാതാവേ ,അങ്ങേ സങ്കേതത്തില്‍ ,ഓടിവന്ന്,അങ്ങേ സഹായം തേടി ,അങ്ങേ മധ്ത്യസ്ഥം അപേക്ഷിച്ചവരില്‍ ഒരുവനെയെങ്കിലും അങ്ങ് ഉപേക്ഷിച്ചതായി ലോകത്തില്‍ കേട്ടിട്ടില്ല എന്ന് ഓര്‍ക്കണമേ. കന്യാവ്രതക്കാരുടെ രാജ്ഞ്നി ,ദയയുള്ള മാതാവേ ,ഈ വിശ്വാസത്തില്‍ സരന്നപെട്ട്,അങ്ങേ തൃപാദത്തില്‍ ഞാന്‍ അണയുന്നു .നെടുവീര്‍പ്പോടും കണ്ണുനീരോടുംകൂടെ പാപിയായ ഞാന്‍ അങ്ങേ ധയാധിക്യത്തെ പ്രതീക്ഷിച്ചുകൊണ്ടെ അങ്ങേ സന്നിധിയില്‍ നില്‍ക്കുന്നു .അവതരിച്ച വചനത്തിന്‍ മാതാവേ ,എന്‍റെ അപേക്ഷ ഉപേക്ഷിക്കാതെ ദയാപൂര്‍വ്വം കേട്ടരുളേണമേ.  ആമ്മേന്‍  </p>
+                                    <p>Total Prayers: <span id="blessedCounter" class="counter">{{ counts['blessed']
+                                            }}</span></p>
+                                    <div id="blessedAnimation" class="animation-container"></div>
+                                    <button id="blessedPrayButton" class="btn btn-primary btn-lg mt-3">Pray Now</button>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="prayer-counter">
+                                    <h3 id="wog-reading">തിരുവചന വായന</h3>
+                                    <h6>for all ministries and initiatives </h6>
+                                    <a class="wog" href="/wog-for-ahava">WoG for Ahava</a>
+                                    <p>1 chapter/ ഒരു അദ്ധ്യായം</p>
+                                    <p>Total Prayers: <span id="wocCounter" class="counter">{{ counts['woc'] }}</span>
+                                    </p>
+                                    <div id="wocAnimation" class="animation-container"></div>
+                                    <button id="wocPrayButton" class="btn btn-primary btn-lg mt-3">Pray Now</button>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        function updateCounter(count) {
+            const creedCounter = document.getElementById('creedCounter');
+            creedCounter.textContent = count.toLocaleString(); // Use toLocaleString for number formatting
+
+        }</script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/pray_for_ahava_script.js') }}"></script>
+</body>
+
+</html>
